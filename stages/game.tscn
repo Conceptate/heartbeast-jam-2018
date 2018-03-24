@@ -1,6 +1,49 @@
-[gd_scene load_steps=2 format=1]
+[gd_scene load_steps=5 format=1]
 
 [ext_resource path="res://sprites/board-0.png" type="Texture" id=1]
+[ext_resource path="res://scripts/GridVisualizer.gd" type="Script" id=2]
+[ext_resource path="res://scenes/snake_circle.tscn" type="PackedScene" id=3]
+
+[sub_resource type="GDScript" id=1]
+
+script/source = "extends TileMap
+
+var tile_size = get_cell_size()
+var half_tile_size = tile_size / 2
+
+enum ENTITY_TYPES {PLAYER, OBSTACLE, FOOD}
+
+var grid_size = Vector2(141, 141)
+var grid = []
+
+onready var Obstacle = preload(\"res://scenes/obstacle.tscn\")
+
+func _ready():
+	
+	# Initialize grid matrix
+	for x in range(grid_size.x):
+		grid.append([])
+		for y in range(grid_size.y):
+			grid[x].append(null)
+	
+	# Generate enemies
+	var positions = []
+	for n in range(5):
+		var grid_pos = Vector2(randi() % int(grid_size.x), randi() % int(grid_size.y))
+		if not grid_pos in positions:
+			positions.append(grid_pos)
+	
+	for pos in positions:
+		var new_obstacle = Obstacle.instance()
+		new_obstacle.set_pos(map_to_world(pos))
+		grid[pos.x][pos.y] = OBSTACLE
+		add_child(new_obstacle)
+
+func is_cell_vacant():
+	pass
+
+func update_child_pos(child, new_pos, direction):
+	pass"
 
 [node name="game" type="Node"]
 
@@ -11,5 +54,38 @@ centered = false
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="grid" type="TileMap" parent="."]
+
+editor/display_folded = true
+transform/pos = Vector2( -10, 0 )
+mode = 0
+tile_set = null
+cell/size = Vector2( 141, 141 )
+cell/quadrant_size = 16
+cell/custom_transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+cell/half_offset = 2
+cell/tile_origin = 0
+cell/y_sort = false
+collision/use_kinematic = false
+collision/friction = 1.0
+collision/bounce = 0.0
+collision/layers = 1
+collision/mask = 1
+occluder/light_mask = 1
+tile_data = IntArray(  )
+script/script = SubResource( 1 )
+
+[node name="grid_visualizer" type="Node2D" parent="grid"]
+
+transform/pos = Vector2( 10, 0 )
+script/script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="snake_circle" parent="grid" instance=ExtResource( 3 )]
+
+transform/pos = Vector2( 987.972, 844.157 )
 
 
