@@ -9,50 +9,7 @@
 
 [sub_resource type="GDScript" id=1]
 
-script/source = "#extends TileMap
-#
-#var tile_size = get_cell_size()
-#var half_tile_size = tile_size / 2
-#
-#enum ENTITY_TYPES {PLAYER, OBSTACLE, FOOD}
-#
-#var grid_size = Vector2(141, 141)
-#var grid = []
-#
-#onready var Obstacle = preload(\"res://scenes/obstacle.tscn\")
-#
-#func _ready():
-#	print(\"This works\")
-#	# Initialize grid matrix
-#	for x in range(grid_size.x):
-#		grid.append([])
-#		for y in range(grid_size.y):
-#			grid[x].append(null)
-#	
-#	# Generate enemies
-#	var positions = []
-#	for n in range(5):
-#		var grid_pos = Vector2(randi() % int(grid_size.x), randi() % int(grid_size.y))
-#		if not grid_pos in positions:
-#			positions.append(grid_pos)
-#	print(positions)
-#	
-#	for pos in positions:
-#		var new_obstacle = Obstacle.instance()
-#		new_obstacle.set_pos(map_to_world(pos))
-#		grid[pos.x][pos.y] = OBSTACLE
-#		add_child(new_obstacle)
-#		print(\"Obstacle spawned.\")
-#
-#func is_cell_vacant():
-#	pass
-#
-#func update_child_pos(child, new_pos, direction):
-#	pass
-
-# Collection of functions to work with a Grid. Stores all its children in the grid array
-
-extends TileMap
+script/source = "extends TileMap
 
 enum ENTITY_TYPES {PLAYER, OBSTACLE, COLLECTIBLE}
 
@@ -62,6 +19,7 @@ var grid_size = Vector2(8, 8)
 
 var grid = []
 onready var Obstacle = preload(\"res://scenes/obstacle.tscn\")
+onready var Goblin = preload(\"res://scenes/goblin.tscn\")
 onready var Player = preload(\"res://scenes/snake_circle.tscn\")
 
 func _ready():
@@ -77,29 +35,46 @@ func _ready():
 	add_child(new_player)
 
 	# Obstacles
-	var positions = []
+	var obstacle_positions = []
 	for x in range(9):
-		var placed = false
-		while not placed:
+		var obstacle_placed = false
+		while not obstacle_placed:
 			var grid_pos = Vector2(randi() % int(grid_size.x), randi() % int(grid_size.y))
 			if not grid[grid_pos.x][grid_pos.y]:
-				if not grid_pos in positions:
-					positions.append(grid_pos)
-					placed = true
+				if not grid_pos in obstacle_positions:
+					obstacle_positions.append(grid_pos)
+					obstacle_placed = true
 
-	for pos in positions:
+	# Enemies
+	var goblin_positions = []
+	for x in range(2):
+		var goblin_placed = false
+		while not goblin_placed:
+			var grid_pos = Vector2(randi() % int(grid_size.x), randi() % int(grid_size.y))
+			if not grid[grid_pos.x][grid_pos.y]:
+				if not grid_pos in goblin_positions and not grid_pos in obstacle_positions:
+					goblin_positions.append(grid_pos)
+					goblin_placed = true
+
+	for object_place_pos in obstacle_positions:
 		var new_obstacle = Obstacle.instance()
-		new_obstacle.set_pos(map_to_world(pos) + half_tile_size)
-		grid[pos.x][pos.y] = new_obstacle.get_name()
+		new_obstacle.set_pos(map_to_world(object_place_pos) + half_tile_size)
+		grid[object_place_pos.x][object_place_pos.y] = new_obstacle.get_name()
 		add_child(new_obstacle)
+	
+	for goblin_place_pos in goblin_positions:
+		var new_goblin = Goblin.instance()
+		new_goblin.set_pos(map_to_world(goblin_place_pos) + half_tile_size)
+		grid[goblin_place_pos.x][goblin_place_pos.y] = new_goblin.get_name()
+		add_child(new_goblin)
 
 
-func get_cell_content(pos=Vector2()):
-	return grid[pos.x][pos.y]
+func get_cell_content(object_place_pos=Vector2()):
+	return grid[object_place_pos.x][object_place_pos.y]
 
 
-func is_cell_vacant(pos=Vector2(), direction=Vector2()):
-	var grid_pos = world_to_map(pos) + direction
+func is_cell_vacant(object_place_pos=Vector2(), direction=Vector2()):
+	var grid_pos = world_to_map(object_place_pos) + direction
 
 	if grid_pos.x < grid_size.x and grid_pos.x >= 0:
 		if grid_pos.y < grid_size.y and grid_pos.y >= 0:
@@ -162,10 +137,12 @@ __meta__ = {
 [node name="torch_left" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 136, 601 )
+frame = 2
 
 [node name="torch_right" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 1391, 601 )
+frame = 2
 flip_h = true
 
 [node name="TextureProgress" type="TextureProgress" parent="."]
