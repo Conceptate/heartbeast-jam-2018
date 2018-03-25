@@ -137,12 +137,12 @@ __meta__ = {
 [node name="torch_left" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 136, 601 )
-frame = 3
+frame = 2
 
 [node name="torch_right" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 1391, 601 )
-frame = 3
+frame = 2
 flip_h = true
 
 [node name="TextureProgress" type="TextureProgress" parent="."]
