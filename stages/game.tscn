@@ -1,6 +1,120 @@
-[gd_scene load_steps=2 format=1]
+[gd_scene load_steps=4 format=1]
 
 [ext_resource path="res://sprites/board-0.png" type="Texture" id=1]
+[ext_resource path="res://scripts/GridVisualizer.gd" type="Script" id=2]
+
+[sub_resource type="GDScript" id=1]
+
+script/source = "#extends TileMap
+#
+#var tile_size = get_cell_size()
+#var half_tile_size = tile_size / 2
+#
+#enum ENTITY_TYPES {PLAYER, OBSTACLE, FOOD}
+#
+#var grid_size = Vector2(141, 141)
+#var grid = []
+#
+#onready var Obstacle = preload(\"res://scenes/obstacle.tscn\")
+#
+#func _ready():
+#	print(\"This works\")
+#	# Initialize grid matrix
+#	for x in range(grid_size.x):
+#		grid.append([])
+#		for y in range(grid_size.y):
+#			grid[x].append(null)
+#	
+#	# Generate enemies
+#	var positions = []
+#	for n in range(5):
+#		var grid_pos = Vector2(randi() % int(grid_size.x), randi() % int(grid_size.y))
+#		if not grid_pos in positions:
+#			positions.append(grid_pos)
+#	print(positions)
+#	
+#	for pos in positions:
+#		var new_obstacle = Obstacle.instance()
+#		new_obstacle.set_pos(map_to_world(pos))
+#		grid[pos.x][pos.y] = OBSTACLE
+#		add_child(new_obstacle)
+#		print(\"Obstacle spawned.\")
+#
+#func is_cell_vacant():
+#	pass
+#
+#func update_child_pos(child, new_pos, direction):
+#	pass
+
+# Collection of functions to work with a Grid. Stores all its children in the grid array
+
+extends TileMap
+
+enum ENTITY_TYPES {PLAYER, OBSTACLE, COLLECTIBLE}
+
+var tile_size = get_cell_size()
+var half_tile_size = tile_size / 2
+var grid_size = Vector2(8, 8)
+
+var grid = []
+onready var Obstacle = preload(\"res://scenes/obstacle.tscn\")
+onready var Player = preload(\"res://scenes/snake_circle.tscn\")
+
+func _ready():
+	randomize()
+	for x in range(grid_size.x):
+		grid.append([])
+		for y in range(grid_size.y):
+			grid[x].append(null)
+
+	# Player
+	var new_player = Player.instance()
+	new_player.set_pos(map_to_world(Vector2(4,4)) + half_tile_size)
+	add_child(new_player)
+
+	# Obstacles
+	var positions = []
+	for x in range(5):
+		var placed = false
+		while not placed:
+			var grid_pos = Vector2(randi() % int(grid_size.x), randi() % int(grid_size.y))
+			if not grid[grid_pos.x][grid_pos.y]:
+				if not grid_pos in positions:
+					positions.append(grid_pos)
+					placed = true
+
+	for pos in positions:
+		var new_obstacle = Obstacle.instance()
+		new_obstacle.set_pos(map_to_world(pos) + half_tile_size)
+		grid[pos.x][pos.y] = new_obstacle.get_name()
+		add_child(new_obstacle)
+
+
+func get_cell_content(pos=Vector2()):
+	return grid[pos.x][pos.y]
+
+
+func is_cell_vacant(pos=Vector2(), direction=Vector2()):
+	var grid_pos = world_to_map(pos) + direction
+
+	if grid_pos.x < grid_size.x and grid_pos.x >= 0:
+		if grid_pos.y < grid_size.y and grid_pos.y >= 0:
+			return true if grid[grid_pos.x][grid_pos.y] == null else false
+	return false
+
+
+func update_child_pos(new_pos, direction, type):
+	# Remove node from current cell, add it to the new cell, returns the new target move_to position
+	var grid_pos = world_to_map(new_pos)
+	print(grid_pos)
+	grid[grid_pos.x][grid_pos.y] = null
+	
+	var new_grid_pos = grid_pos + direction
+	grid[new_grid_pos.x][new_grid_pos.y] = type
+	
+	var target_pos = map_to_world(new_grid_pos) + half_tile_size
+	return target_pos
+"
 
 [node name="game" type="Node"]
 
@@ -8,6 +122,35 @@
 
 texture = ExtResource( 1 )
 centered = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="grid" type="TileMap" parent="."]
+
+transform/pos = Vector2( 202, 212 )
+mode = 0
+tile_set = null
+cell/size = Vector2( 141, 141 )
+cell/quadrant_size = 16
+cell/custom_transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+cell/half_offset = 2
+cell/tile_origin = 0
+cell/y_sort = false
+collision/use_kinematic = false
+collision/friction = 1.0
+collision/bounce = 0.0
+collision/layers = 1
+collision/mask = 1
+occluder/light_mask = 1
+tile_data = IntArray(  )
+script/script = SubResource( 1 )
+
+[node name="grid_visualizer" type="Node2D" parent="grid"]
+
+visibility/visible = false
+transform/pos = Vector2( 10, 0 )
+script/script = ExtResource( 2 )
 __meta__ = {
 "_edit_lock_": true
 }
