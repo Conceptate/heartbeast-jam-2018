@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=1]
+
+[ext_resource path="res://scenes/goblin.gd" type="Script" id=1]
+[ext_resource path="res://IMG_5142.tex" type="Texture" id=2]
+
+[node name="Goblin" type="KinematicBody2D"]
+
+input/pickable = false
+collision/layers = 1
+collision/mask = 1
+collision/margin = 0.001
+script/script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+
+transform/pos = Vector2( 0, -32.5926 )
+transform/scale = Vector2( 0.35, 0.35 )
+texture = ExtResource( 2 )
+offset = Vector2( 18, 0 )
+
+
