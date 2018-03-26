@@ -137,12 +137,12 @@ __meta__ = {
 [node name="torch_left" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 136, 601 )
-frame = 2
+frame = 3
 
 [node name="torch_right" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 1391, 601 )
-frame = 2
+frame = 3
 flip_h = true
 
 [node name="TextureProgress" type="TextureProgress" parent="."]
@@ -168,9 +168,6 @@ texture/over = null
 texture/progress = ExtResource( 5 )
 radial_fill/fill_degrees = 360.0
 radial_fill/center_offset = Vector2( 0, 0 )
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="RichTextLabel" type="RichTextLabel" parent="TextureProgress"]
 
@@ -187,8 +184,5 @@ bbcode/enabled = true
 bbcode/bbcode = "2/3"
 visible_characters = -1
 percent_visible = 1.0
-__meta__ = {
-"_edit_lock_": true
-}
 
 

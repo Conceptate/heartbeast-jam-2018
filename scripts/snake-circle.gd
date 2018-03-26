@@ -71,6 +71,7 @@ func _fixed_process(delta):
 		direction.y = 1
 	elif Input.is_action_pressed("move_left"):
 		direction.x = -1
+		find_node("goblin");
 	elif Input.is_action_pressed("move_right"):
 		direction.x = 1
 
