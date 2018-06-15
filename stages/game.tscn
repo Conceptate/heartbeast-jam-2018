@@ -1,99 +1,10 @@
-[gd_scene load_steps=8 format=1]
+[gd_scene load_steps=6 format=1]
 
-[ext_resource path="res://sprites/board-0.png" type="Texture" id=1]
-[ext_resource path="res://scripts/GridVisualizer.gd" type="Script" id=2]
-[ext_resource path="res://scenes/torch.tscn" type="PackedScene" id=3]
-[ext_resource path="res://sprites/Under.tex" type="Texture" id=4]
-[ext_resource path="res://sprites/Over.tex" type="Texture" id=5]
-[ext_resource path="res://UPCJL.fnt" type="BitmapFont" id=6]
-
-[sub_resource type="GDScript" id=1]
-
-script/source = "extends TileMap
-
-enum ENTITY_TYPES {PLAYER, OBSTACLE, COLLECTIBLE}
-
-var tile_size = get_cell_size()
-var half_tile_size = tile_size / 2
-var grid_size = Vector2(8, 8)
-
-var grid = []
-onready var Obstacle = preload(\"res://scenes/obstacle.tscn\")
-onready var Goblin = preload(\"res://scenes/goblin.tscn\")
-onready var Player = preload(\"res://scenes/snake_circle.tscn\")
-
-func _ready():
-	randomize()
-	for x in range(grid_size.x):
-		grid.append([])
-		for y in range(grid_size.y):
-			grid[x].append(null)
-
-	# Player
-	var new_player = Player.instance()
-	new_player.set_pos(map_to_world(Vector2(4,4)) + half_tile_size)
-	add_child(new_player)
-
-	# Obstacles
-	var obstacle_positions = []
-	for x in range(9):
-		var obstacle_placed = false
-		while not obstacle_placed:
-			var grid_pos = Vector2(randi() % int(grid_size.x), randi() % int(grid_size.y))
-			if not grid[grid_pos.x][grid_pos.y]:
-				if not grid_pos in obstacle_positions:
-					obstacle_positions.append(grid_pos)
-					obstacle_placed = true
-
-	# Enemies
-	var goblin_positions = []
-	for x in range(2):
-		var goblin_placed = false
-		while not goblin_placed:
-			var grid_pos = Vector2(randi() % int(grid_size.x), randi() % int(grid_size.y))
-			if not grid[grid_pos.x][grid_pos.y]:
-				if not grid_pos in goblin_positions and not grid_pos in obstacle_positions:
-					goblin_positions.append(grid_pos)
-					goblin_placed = true
-
-	for object_place_pos in obstacle_positions:
-		var new_obstacle = Obstacle.instance()
-		new_obstacle.set_pos(map_to_world(object_place_pos) + half_tile_size)
-		grid[object_place_pos.x][object_place_pos.y] = new_obstacle.get_name()
-		add_child(new_obstacle)
-	
-	for goblin_place_pos in goblin_positions:
-		var new_goblin = Goblin.instance()
-		new_goblin.set_pos(map_to_world(goblin_place_pos) + half_tile_size)
-		grid[goblin_place_pos.x][goblin_place_pos.y] = new_goblin.get_name()
-		add_child(new_goblin)
-
-
-func get_cell_content(object_place_pos=Vector2()):
-	return grid[object_place_pos.x][object_place_pos.y]
-
-
-func is_cell_vacant(object_place_pos=Vector2(), direction=Vector2()):
-	var grid_pos = world_to_map(object_place_pos) + direction
-
-	if grid_pos.x < grid_size.x and grid_pos.x >= 0:
-		if grid_pos.y < grid_size.y and grid_pos.y >= 0:
-			return true if grid[grid_pos.x][grid_pos.y] == null else false
-	return false
-
-
-func update_child_pos(new_pos, direction, type):
-	# Remove node from current cell, add it to the new cell, returns the new target move_to position
-	var grid_pos = world_to_map(new_pos)
-	print(grid_pos)
-	grid[grid_pos.x][grid_pos.y] = null
-	
-	var new_grid_pos = grid_pos + direction
-	grid[new_grid_pos.x][new_grid_pos.y] = type
-	
-	var target_pos = map_to_world(new_grid_pos) + half_tile_size
-	return target_pos
-"
+[ext_resource path="res://sprites/elements/board/board.png" type="Texture" id=1]
+[ext_resource path="res://scripts/grid.gd" type="Script" id=2]
+[ext_resource path="res://scripts/GridVisualizer.gd" type="Script" id=3]
+[ext_resource path="res://scenes/torch.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/healthbar.tscn" type="PackedScene" id=5]
 
 [node name="game" type="Node"]
 
@@ -123,66 +34,27 @@ collision/layers = 1
 collision/mask = 1
 occluder/light_mask = 1
 tile_data = IntArray(  )
-script/script = SubResource( 1 )
+script/script = ExtResource( 2 )
 
 [node name="grid_visualizer" type="Node2D" parent="grid"]
 
 visibility/visible = false
 transform/pos = Vector2( 10, 0 )
-script/script = ExtResource( 2 )
+script/script = ExtResource( 3 )
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="torch_left" parent="." instance=ExtResource( 3 )]
+[node name="torch_left" parent="." instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 136, 601 )
-frame = 3
+frame = 1
 
-[node name="torch_right" parent="." instance=ExtResource( 3 )]
+[node name="torch_right" parent="." instance=ExtResource( 4 )]
 
 transform/pos = Vector2( 1391, 601 )
-frame = 3
+frame = 1
 flip_h = true
 
-[node name="TextureProgress" type="TextureProgress" parent="."]
-
-rect/scale = Vector2( 4, 4 )
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 462.0
-margin/top = 74.0
-margin/right = 718.0
-margin/bottom = 153.0
-range/min = 0.0
-range/max = 100.0
-range/step = 1.0
-range/page = 0.0
-range/value = 66.0
-range/exp_edit = false
-range/rounded = false
-texture/under = ExtResource( 4 )
-texture/over = null
-texture/progress = ExtResource( 5 )
-radial_fill/fill_degrees = 360.0
-radial_fill/center_offset = Vector2( 0, 0 )
-
-[node name="RichTextLabel" type="RichTextLabel" parent="TextureProgress"]
-
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 58.0
-margin/top = 0.0
-margin/right = 506.0
-margin/bottom = 140.0
-custom_fonts/normal_font = ExtResource( 6 )
-bbcode/enabled = true
-bbcode/bbcode = "2/3"
-visible_characters = -1
-percent_visible = 1.0
+[node name="healthbar" parent="." instance=ExtResource( 5 )]
 
 
