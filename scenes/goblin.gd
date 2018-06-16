@@ -25,7 +25,19 @@ func _fixed_process(delta):
 	direction = Vector2()
 	speed = 0
 
-	if Input.is_action_pressed("move_anydir"):
+	if Input.is_action_pressed("move_up"):
+		direction.y = floor(rand_range(-1,2))
+		if(direction.y == 0):
+			direction.x = floor(rand_range(-1,2))
+	elif Input.is_action_pressed("move_down"):
+		direction.y = floor(rand_range(-1,2))
+		if(direction.y == 0):
+			direction.x = floor(rand_range(-1,2))
+	elif Input.is_action_pressed("move_left"):
+		direction.y = floor(rand_range(-1,2))
+		if(direction.y == 0):
+			direction.x = floor(rand_range(-1,2))
+	elif Input.is_action_pressed("move_right"):
 		direction.y = floor(rand_range(-1,2))
 		if(direction.y == 0):
 			direction.x = floor(rand_range(-1,2))

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=1]
 
-[ext_resource path="res://sprites/elements/obstacle/Obstacle.tex" type="Texture" id=1]
+[ext_resource path="res://sprites/Obstacle.tex" type="Texture" id=1]
 
 [node name="obstacle" type="Node2D"]
 
