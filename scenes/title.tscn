@@ -1,8 +1,7 @@
 [gd_scene load_steps=3 format=1]
 
 [ext_resource path="res://scripts/title.gd" type="Script" id=1]
-[ext_resource path="res://sprites/ux/title/title.png" type="Texture" id=2]
-
+[ext_resource path="res://sprites/title.png" type="Texture" id=2]
 
 [node name="title" type="Node"]
 
