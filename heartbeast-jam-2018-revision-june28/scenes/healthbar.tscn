@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=1]
+
+[ext_resource path="res://sprites/Under.tex" type="Texture" id=1]
+[ext_resource path="res://sprites/Over.tex" type="Texture" id=2]
+[ext_resource path="res://UPCJL.fnt" type="BitmapFont" id=3]
+
+[node name="healthbar" type="TextureProgress"]
+
+rect/scale = Vector2( 4, 4 )
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 460.0
+margin/top = 76.0
+margin/right = 716.0
+margin/bottom = 155.0
+range/min = 0.0
+range/max = 100.0
+range/step = 1.0
+range/page = 0.0
+range/value = 66.0
+range/exp_edit = false
+range/rounded = false
+texture/under = ExtResource( 1 )
+texture/over = null
+texture/progress = ExtResource( 2 )
+radial_fill/fill_degrees = 360.0
+radial_fill/center_offset = Vector2( 0, 0 )
+
+[node name="healthbar_label" type="RichTextLabel" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 58.0
+margin/top = 0.0
+margin/right = 303.0
+margin/bottom = 20.0
+custom_fonts/normal_font = ExtResource( 3 )
+bbcode/enabled = true
+bbcode/bbcode = "2/3"
+visible_characters = -1
+percent_visible = 1.0
+
+

@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=1]
+
+[ext_resource path="res://scripts/title.gd" type="Script" id=1]
+[ext_resource path="res://sprites/title.png" type="Texture" id=2]
+
+[node name="title" type="Node"]
+
+script/script = ExtResource( 1 )
+
+[node name="title-banner" type="Sprite" parent="."]
+
+texture = ExtResource( 2 )
+centered = false
+
+
